@@ -1,4 +1,6 @@
 var express = require("express");
+var bodyParser = require('body-parser');
+
 var app = express();
 
 var http = require("http");
@@ -15,6 +17,8 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
+
+
 connection.query('select * from notice', function(err, rows, fields){
     if(!err)
         console.log('The solution is: ' , rows);
@@ -24,9 +28,34 @@ connection.query('select * from notice', function(err, rows, fields){
 
 connection.end();
 
+
+
+app.set('views','./views_mysql');
+app.set('view engine', 'pug');
+
+
+app.use(express.static('public'));
+app.use(bodyParser.urlencoded({extended: false}));
+
 app.get('/', function(req,res){
-    res.send("Hello world.");    
+    
 })
+
+app.get('/topic/:id',function(req,res){
+	var sql = 'select * from notice';
+	connection.query(sql, function(err, rows, fields){
+	    res.render('view', {topics:topics});
+	});
+})
+
+
+
 app.listen(process.env.PORT, function(){
     console.log('Connected!!!!');
 })
+
+
+
+
+
+
